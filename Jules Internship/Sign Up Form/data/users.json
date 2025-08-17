@@ -18,5 +18,13 @@
   {
     "username": "test",
     "password": "Test$9"
+  },
+  {
+    "username": "test2",
+    "password": "test1T"
+  },
+  {
+    "username": "test3",
+    "password": "Test$9"
   }
 ]

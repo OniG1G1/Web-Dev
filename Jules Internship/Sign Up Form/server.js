@@ -2,16 +2,24 @@ const http = require('http');
 const path = require('path');
 const fs = require('fs');
 const { serveIndex, handleSignup } = require('./controllers/UserController');
+const PORT = 3000;
 
 const server = http.createServer((req, res) => {
-  if (req.url === '/' || req.url === '/index.html') {
+  const url = req.url;
+  const method = req.method;
+  console.log("request has been made: " + url);
+  console.log("URL part: " + url, "::: Method part: " + method + "\n");
+
+  if (url === '/' || url === '/index.html') {
     serveIndex(res);
   }
-  else if (req.url === '/signup' && req.method === 'POST') {
+
+  else if (url === '/signup' && method === 'POST') {
     handleSignup(req, res);
   }
-  else if (req.url.startsWith('/css/')) {
-    const filePath = path.join(__dirname, 'public', req.url);
+
+  else if (url.startsWith('/css/')) {
+    const filePath = path.join(__dirname, 'public', url);
     fs.readFile(filePath, (err, data) => {
       if (err) {
         res.writeHead(404);
@@ -22,12 +30,13 @@ const server = http.createServer((req, res) => {
       res.end(data);
     });
   }
+  
   else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('404 - Not found');
   }
 });
 
-server.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
+server.listen(PORT, () => {
+  console.log('Server running at http://localhost:3000' + "\n");
 });

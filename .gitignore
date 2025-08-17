@@ -1,7 +1,9 @@
-# Ignore the dasmotos project folder
-dasmotosArts&Crafts/
+CodeAcademy/
 
-# Ignore the first hello world project
 helloWorldNode/
+Sign Up Form #2/
 
-TetrisGame/
+node_modules/
+
+/package-lock.json
+/package.json

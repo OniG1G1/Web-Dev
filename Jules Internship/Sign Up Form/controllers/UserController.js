@@ -23,6 +23,7 @@ const handleSignup = (req, res) => {
   req.on('data', chunk => body += chunk.toString());
 
   req.on('end', () => {
+    console.log(body);
     const { username, password } = querystring.parse(body);
     const result = userService.createUser(username, password);
 
