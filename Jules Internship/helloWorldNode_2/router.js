@@ -3,7 +3,7 @@ const { DateHandler } = require('./handlerFactory');
 
 // define route handlers using a factory design pattern
 const routes = {
-    '/': new DateHandler(d => d, 'Today is '), {controller:"root",action:"index"}
+    '/': new DateHandler(d => d, 'Today is '), 
     '/index.html': new DateHandler(d => d, 'Today is '),
     '/now': new DateHandler(d => d, 'Today is '),
 
