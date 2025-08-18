@@ -7,8 +7,27 @@ const PORT = 3000;
 const server = http.createServer((req, res) => {
   const url = req.url;
   const method = req.method;
+
   console.log("request has been made: " + url);
   console.log("URL part: " + url, "::: Method part: " + method + "\n");
+
+  // 
+  // START: EXAMPLE INTERFACE DESIGN FOR ROUTER BASED REQUEST HANDLING
+  //
+  router = new Router();
+  router.addRoute('/', (req, res) => {serveIndex(res); });
+  router.addRoute('/signup', (req, res) => {handleSignup(req, res); });
+  router.add404Route((req, res) => {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('404 - Not found');
+  });
+
+  handler = new RequestHandler();
+  handler.handleRequest(req, res, router);
+  // 
+  // END: EXAMPLE INTERFACE DESIGN FOR ROUTER BASED REQUEST HANDLING
+  //
+  
 
   if (url === '/' || url === '/index.html') {
     serveIndex(res);
