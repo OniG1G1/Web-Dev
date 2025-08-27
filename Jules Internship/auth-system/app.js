@@ -6,9 +6,6 @@ const RequestHandler = require("./src/core/RequestHandler");
 const router = new Router();
 
 // Register backend/API routes
-router.register("GET", "/", "UserController.serveLoginPage");
-
-
 router.register("POST", "/signup", "UserController.signup");
 router.register("POST", "/login", "UserController.login");
 

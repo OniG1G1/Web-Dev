@@ -10,8 +10,14 @@ class RequestHandler {
 
   handle(req, res) {
     const method = req.method;
-    let url = req.url;
+    const url = req.url;
     console.log(method, url);
+
+    if (req.method === "GET" && (req.url === "/" || req.url === "/index.html")) {
+      res.writeHead(302, { Location: "/login.html" });
+      res.end();
+      return;
+    }
 
     // --- Serve static files first ---
     if (method === "GET" && this.isStaticFile(url)) {
