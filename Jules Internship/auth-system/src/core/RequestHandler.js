@@ -1,0 +1,60 @@
+const fs = require("fs");
+const path = require("path");
+const UserController = require("../controllers/UserController");
+
+class RequestHandler {
+  constructor(router) {
+    this.router = router;
+    this.staticFolder = path.join(__dirname, "../../public");
+  }
+
+  handle(req, res) {
+    const method = req.method;
+    let url = req.url;
+    console.log(method, url);
+
+    // --- Serve static files first ---
+    if (method === "GET" && this.isStaticFile(url)) {
+      this.serveStatic(url, res);
+      return;
+    }
+
+    // --- API route ---
+    const handlerName = this.router.resolve(method, url);
+    if (handlerName) {
+      const [controllerName, methodName] = handlerName.split(".");
+      if (controllerName === "UserController" && UserController[methodName]) {
+        UserController[methodName](req, res);
+        return;
+      }
+    }
+
+    // --- Not found ---
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("404 - Not Found");
+  }
+
+  isStaticFile(url) {
+    return url.endsWith(".html") || url.endsWith(".css") || url.endsWith(".js");
+  }
+
+  serveStatic(url, res) {
+    const filePath = path.join(this.staticFolder, url);
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        res.writeHead(404);
+        res.end("Not Found");
+        return;
+      }
+
+      let contentType = "text/html";
+      if (url.endsWith(".css")) contentType = "text/css";
+      //if (url.endsWith(".js")) contentType = "application/javascript";
+
+      res.writeHead(200, { "Content-Type": contentType });
+      res.end(data);
+    });
+  }
+}
+
+module.exports = RequestHandler;
