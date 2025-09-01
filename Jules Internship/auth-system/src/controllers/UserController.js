@@ -1,7 +1,8 @@
+const path = require('path');
 const querystring = require("querystring");
 const userService = require("../services/UserService");
 
-const signup = (req, res) => {
+const handleSignup = (req, res) => {
   let body = "";
   req.on("data", chunk => (body += chunk.toString()));
   req.on("end", () => {
@@ -12,7 +13,7 @@ const signup = (req, res) => {
   });
 };
 
-const login = (req, res) => {
+const handleLogin = (req, res) => {
   let body = "";
   req.on("data", chunk => (body += chunk.toString()));
   req.on("end", () => {
@@ -23,4 +24,8 @@ const login = (req, res) => {
   });
 };
 
-module.exports = { signup, login };
+module.exports = {
+  handleSignup,
+  handleLogin,
+};
+

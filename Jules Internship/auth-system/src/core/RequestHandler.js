@@ -13,12 +13,14 @@ class RequestHandler {
     const url = req.url;
     console.log(method, url);
 
+    // Use the router
     if (req.method === "GET" && (req.url === "/" || req.url === "/index.html")) {
       res.writeHead(302, { Location: "/login.html" });
       res.end();
       return;
     }
 
+    // Here too
     // --- Serve static files first ---
     if (method === "GET" && this.isStaticFile(url)) {
       this.serveStatic(url, res);
@@ -29,7 +31,7 @@ class RequestHandler {
     const handlerName = this.router.resolve(method, url);
     if (handlerName) {
       const [controllerName, methodName] = handlerName.split(".");
-      if (controllerName === "UserController" && UserController[methodName]) {
+      if (controllerName === "UserController" && UserController[methodName]) { // Dynamic call, not good practice, better than eval, security hole
         UserController[methodName](req, res);
         return;
       }
