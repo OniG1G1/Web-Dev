@@ -7,14 +7,20 @@ class Router {
     this.publicFolder = publicFolder;
 
     // Default 404 handler
-    this.default404 = (req, res) => {
-      res.writeHead(404, { "Content-Type": "text/plain" });
-      res.end("404 - Not Found");
+    this.default404 = ({}, res) => {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({
+        success: false,
+        message: "404 - Not Found"
+      }));
     };
     // Default invalid JSON handler
     this.invalidJsonHandler = (req, res) => {
-      res.writeHead(400, { "Content-Type": "text/plain" });
-      res.end("Invalid JSON");
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({
+        success: false,
+        message: "Invalid JSON"
+      }));
     };
   }
 
@@ -49,7 +55,7 @@ class Router {
     return this.routes[key] || this.default404;
   }
 
-  serveStatic(url, res) {
+  serveStatic(url,req, res) {
     const filePath = path.join(this.publicFolder, url);
     fs.access(filePath, fs.constants.F_OK, (err) => {
       if (err) {
@@ -80,14 +86,14 @@ class Router {
       });
     });
   }
-  
+
   // Handle a request
   handle(req, res) {
     const urlObj = new URL(req.url, `http://${req.headers.host}`);
     const pathName = urlObj.pathname;
     const method = req.method;
 
-    console.log("Request:", urlObj.href, "Method:", method);
+    console.log("Request:", urlObj.href, " \n Method:", method, "\n");
 
     if (method === "GET" && (pathName === "/" || pathName === "/index.html")) {
       res.writeHead(302, { Location: "/login.html" });
@@ -97,7 +103,7 @@ class Router {
 
     // --- Serve static files first ---
     if (method === "GET" && this.isStaticFile(pathName)) {
-      this.serveStatic(pathName, res);
+      this.serveStatic(pathName, req, res);
       return;
     }
 
