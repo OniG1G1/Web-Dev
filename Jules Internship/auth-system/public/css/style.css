@@ -16,3 +16,18 @@ input {
 button {
   padding: 10px 20px;
 }
+
+.feedback {
+  margin: 8px 0;
+  font-size: 0.9em;
+  height: 1.2em; /* reserve space so layout doesn't jump */
+}
+
+.feedback.error {
+  color: red;
+}
+
+.feedback.success {
+  color: green;
+}
+

@@ -1,43 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Grab forms (if they exist on the page)
-  const loginForm = document.getElementById("loginForm");
-  const signupForm = document.getElementById("signupForm");
+  const loginForm = document.querySelector("form[action='/login']") || document.getElementById("loginForm");
+  const signupForm = document.querySelector("form[action='/signup']") || document.getElementById("signupForm");
 
-  // Attach event listeners
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      handleAuthForm(loginForm, "/login");
-    });
-  }
-
-  if (signupForm) {
-    signupForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      handleAuthForm(signupForm, "/signup");
-    });
-  }
+  if (loginForm) handleAuthForm(loginForm, "/login", "loginFeedback");
+  if (signupForm) handleAuthForm(signupForm, "/signup", "signupFeedback");
 });
 
-// Helper to process form submission
-async function handleAuthForm(form, endpoint) {
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData.entries());
+function handleAuthForm(form, endpoint, feedbackId) {
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-  //console.log("Submitting to", endpoint, "with data:", data);
-  try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    const feedbackEl = document.getElementById(feedbackId);
 
-    const result = await response.json();
-    console.log("Server response:", result);
-    // Step 4 will display this inline instead of console.log
-  } catch (error) {
-    console.error("Error submitting form:", error);
-  }
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      // Clear old styles
+      feedbackEl.classList.remove("error", "success");
+
+      if (result.success) {
+        // ✅ redirect immediately on success
+        window.location.href = "/home.html";
+      } else {
+        // ❌ show errors inline
+        feedbackEl.textContent = result.message;
+        feedbackEl.classList.add("error");
+      }
+    } catch (err) {
+      feedbackEl.textContent = "An unexpected error occurred.";
+      feedbackEl.classList.add("error");
+    }
+  });
 }

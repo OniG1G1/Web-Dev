@@ -95,17 +95,30 @@ class Router {
 
     console.log("Request:", urlObj.href, " \n Method:", method, "\n");
 
-    if (method === "GET" && (pathName === "/" || pathName === "/index.html")) {
-      res.writeHead(302, { Location: "/login.html" });
-      res.end();
-      return;
-    }
+    // --- Redirect root to login ---
+  if (method === "GET" && (pathName === "/" || pathName === "/index.html")) {
+    res.writeHead(302, { Location: "/login.html" });
+    res.end();
+    return;
+  }
 
-    // --- Serve static files first ---
-    if (method === "GET" && this.isStaticFile(pathName)) {
+    // --- Serve static files ---
+  if (method === "GET") {
+    // Case 1: Requested URL has an extension
+    if (this.isStaticFile(pathName)) {
       this.serveStatic(pathName, req, res);
       return;
     }
+
+    /*
+    // Case 2: Requested URL has no extension → try appending .html
+    const htmlPath = `${pathName}.html`;
+    if (fs.existsSync(path.join(this.publicFolder, htmlPath))) {
+      this.serveStatic(htmlPath, req, res);
+      return;
+    }
+      */
+  }
 
     // --- Check registered routes ---
     const handler = this.resolve(method, pathName);
@@ -117,6 +130,7 @@ class Router {
     // --- Default 404 if nothing matched ---
     this.default404(req, res);
   }
+
 
   isStaticFile(url) {
     return [".html", ".css", ".js", ".json", ".png", ".jpg"].some(ext => url.endsWith(ext));
